@@ -2,7 +2,7 @@
 
 #include <bits/stdc++.h>
 #include <windows.h>
-#include<time.h>
+#include <time.h>
 #include <mmsystem.h>
 #pragma comment(lib, "winmm,lib")
 using namespace std;
@@ -258,7 +258,7 @@ void iDraw()
                 {
                     iShowBMP2(100, 200, hangman[chances], 255);
                     iText(750 - hintsize, 250, arr3, GLUT_BITMAP_TIMES_ROMAN_24);
-                    iText(785 - comparesize, 200, arr2, GLUT_BITMAP_TIMES_ROMAN_24);
+                    iText(780 - comparesize, 200, arr2, GLUT_BITMAP_TIMES_ROMAN_24);
                     string s = printavailableletters(guess, 'A', 'Z');
                     char arr[s.size() + 1];
                     strcpy(arr, s.c_str());
@@ -334,6 +334,7 @@ void iMouse(int button, int state, int mx, int my)
 {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
     {
+
         if (sound)
             PlaySound("music\\mouse-click.wav", NULL, SND_ASYNC);
         printf("%d %d\n", mx, my);
@@ -382,7 +383,7 @@ void iMouse(int button, int state, int mx, int my)
             chances = 10;
             sorry = 0;
             ++r;
-            if (r>47)
+            if (r > 47)
                 r = 0;
             word = wordlist[r];
             hint = hints[r];
@@ -405,7 +406,7 @@ void iMouse(int button, int state, int mx, int my)
             {
 
                 ++r;
-                if (r>47)
+                if (r > 47)
                     r = 0;
                 word = wordlist[r];
                 hint = hints[r];
@@ -435,7 +436,7 @@ void iMouse(int button, int state, int mx, int my)
             {
 
                 ++r;
-                if (r>47)
+                if (r > 47)
                     r = 0;
                 word = wordlist[r];
                 hint = hints[r];
@@ -475,98 +476,118 @@ void iMouse(int button, int state, int mx, int my)
 }
 void iKeyboard(unsigned char key)
 {
-    if (sound)
-        PlaySound("music\\click.wav", NULL, SND_ASYNC);
-    if (game == 1)
+    if ((key >= 65 && key <= 90) || key == 8 || key == 13 || (key >= 97 && key <= 122))
     {
-        if (chances > 0)
-        {
-
-            guess += toupper(key);
-            if (won(word, guess))
-            {
-                if (sound)
-                    PlaySound("music\\success.wav", NULL, SND_ASYNC);
-                wonflag = 1;
-                score += 1;
-            }
-            if (!chancheck(word, guess))
-                --chances;
-        }
-        if (chances == 0)
-        {
-            sorry = 1;
-            if (sound)
-                PlaySound("music\\sorryh.wav", NULL, SND_ASYNC);
-            if (score > 0)
-                score -= 1;
-        }
-    }
-    else if (game == 2)
-    {
-        if (wordinput && (int)key != 13)
-        {
-            word2 += toupper(key);
-        }
-        else if (wordinput && (int)key == 13)
-        {
-            wordinput = 0;
-            hintinput = 1;
-        }
-        else if (hintinput == 1 && (int)key != 13)
-        {
-            hint2 += toupper(key);
-        }
-        else if (hintinput == 1 && (int)key == 13)
-        {
-            hintinput = 2;
-        }
-        else if (hintinput == 2)
+        if (sound)
+            PlaySound("music\\click.wav", NULL, SND_ASYNC);
+        if (game == 1)
         {
             if (chances > 0)
             {
-                guess += toupper(key);
-                if (won(word2, guess))
-                {
-                    wonflag = 1;
 
+                guess += toupper(key);
+                if (won(word, guess))
+                {
                     if (sound)
                         PlaySound("music\\success.wav", NULL, SND_ASYNC);
+                    wonflag = 1;
                     score += 1;
                 }
-                else
+                if (!chancheck(word, guess))
+                    --chances;
+            }
+            if (chances == 0)
+            {
+                sorry = 1;
+                if (sound)
+                    PlaySound("music\\sorryh.wav", NULL, SND_ASYNC);
+                if (score > 0)
+                    score -= 1;
+            }
+        }
+        else if (game == 2)
+        {
+            if (wordinput && (int)key != 13)
+            {
+                if (key == 8)
                 {
-                    if (!chancheck(word2, guess))
-                        --chances;
-                    if (chances == 0)
+                    if (word2.size())
+                        word2.pop_back();
+                }
+                else
+                    word2 += toupper(key);
+            }
+            else if (wordinput && (int)key == 13)
+            {
+                wordinput = 0;
+                hintinput = 1;
+            }
+            else if (hintinput == 1 && (int)key != 13)
+            {
+                if (key == 8)
+                {
+                    if (hint2.size())
+                        hint2.pop_back();
+                }
+                else
+                    hint2 += toupper(key);
+            }
+            else if (hintinput == 1 && (int)key == 13)
+            {
+                hintinput = 2;
+            }
+            else if (hintinput == 2)
+            {
+                if (chances > 0)
+                {
+                    guess += toupper(key);
+                    if (won(word2, guess))
                     {
-                        sorry = 1;
+                        wonflag = 1;
+
                         if (sound)
-                            PlaySound("music\\sorryh.wav", NULL, SND_ASYNC);
-                        if (score > 0)
-                            score -= 1;
+                            PlaySound("music\\success.wav", NULL, SND_ASYNC);
+                        score += 1;
+                    }
+                    else
+                    {
+                        if (!chancheck(word2, guess))
+                            --chances;
+                        if (chances == 0)
+                        {
+                            sorry = 1;
+                            if (sound)
+                                PlaySound("music\\sorryh.wav", NULL, SND_ASYNC);
+                            if (score > 0)
+                                score -= 1;
+                        }
                     }
                 }
             }
         }
-    }
-    else if (game == 5)
-    {
-        if (key == '\r')
+        else if (game == 5)
         {
-            strcpy(player1.name, playername.c_str());
-            player1.score = score;
-            updateplayer(Players, player1);
-            updateleaderboard(Players);
-            playername = "";
-            game = 0;
-            nameinput = 0;
-            score = 0;
-        }
-        else
-        {
-
-            playername += toupper(key);
+            if (key == '\r')
+            {
+                strcpy(player1.name, playername.c_str());
+                player1.score = score;
+                updateplayer(Players, player1);
+                updateleaderboard(Players);
+                playername = "";
+                game = 0;
+                nameinput = 0;
+                score = 0;
+            }
+            else
+            {
+                if (key == 8)
+                {
+                    if (playername.size())
+                        playername.pop_back();
+                }
+                else
+                    playername += toupper(key);
+            }
         }
     }
 }
@@ -581,9 +602,10 @@ void iSpecialKeyboard(unsigned char key)
 }
 
 int main()
-{srand(time(NULL));
-   r=rand()%45;
-    
+{
+    srand(time(NULL));
+    r = rand() % 45;
+
     FILE *fil = fopen("leaderboard.txt", "r");
 
     for (int i = 0; i < 3; i++)
